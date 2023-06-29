@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        function List({data, children}) {
+            return (
+                <ul>
+                    {data.map((...props) => children(...props))}
+                </ul>
+            )
+        }
+        // với cách render này ta thấy callback sẻ thực hiện truyền dữ liệu lại
+        // ta vẫn truyền dữ liệu thông qua prop của thẻ List đẻ function List có thể nhận được dữ liệu cho param
+        // và children của thẻ List sẽ là function callback cho func List
+        // Khi đó ta chỉ cần gọi hàm children(callback) thì childrean của của List sẽ nhận lại đc dữ liệu rồi render
+        const cars = ['BMW', 'Honda', 'Mazda'];
+
+        function App() {
+            // ta có {(item, index) => <li key={index}>{item}</li>} là children của List
+            return (
+                <div id="wrapper">
+                    <List data={cars}>
+                        {(item, index) => <li key={index}>{item}</li>}
+                    </List>
+                </div>
+            )
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
