@@ -208,7 +208,7 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
         - Set state là thay thế state bằng giá trị mới 
     - Bài tập:
         **Lưu ý:** nhớ import thư viện cần dùng "import { useState } from "react"
-        1. Tăng thêm 1 đơn vị mỗi lần click vào button.
+        1. Tăng thêm 1 đơn vị mỗi lần click vào button:
             ```jsx
             function App() {
                 const handleIncrease = () => {
@@ -223,7 +223,7 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
                 );
             }
             ```
-        2. Todolish.
+        2. Todolish:
             ```jsx
             function App() {
                 const [jobs, setJobs] = useState(() => {
