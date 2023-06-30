@@ -206,3 +206,54 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
         - Set state với callback?
         - Innitial state với callback?
         - Set state là thay thế state bằng giá trị mới 
+    - Bài tập:
+        **Lưu ý:** nhớ import thư viện cần dùng "import { useState } from "react"
+        1. Tăng thêm 1 đơn vị mỗi lần click vào button
+            function App() {
+                const handleIncrease = () => {
+                    setCounter(counter + 1)
+                }
+                
+                return (
+                    <div className="App" style={{padding:32}}>
+                        <h1>{counter}</h1>
+                        <button onClick={handleIncrease}>Increase</button>
+                    </div>
+                );
+            }
+        2. Todolish
+            function App() {
+                const [jobs, setJobs] = useState(() => {
+                    const storageJobs = JSON.parse(localStorage.getItem('jobs'));
+                    return storageJobs || []
+                });
+                const [job, setJob] = useState('');
+
+                const handleSubmit = () => {
+                    setJobs(arr => {
+                    const newJobs = [...arr, job];
+
+                    //save to local storage
+                    const jsonJobs = JSON.stringify(newJobs);
+                    localStorage.setItem('jobs', jsonJobs);
+
+                    return newJobs;
+                    });
+                    setJob('');
+                }
+
+                
+                return (
+                    <div className="App" style={{padding:32}}>
+                        <input value={job} onChange={e => setJob(e.target.value)} />
+                        <button onClick={handleSubmit}>Add</button>
+
+                        <ul>
+                            {jobs.map((job, key) => <li key={key}>{job}</li>)}
+                        </ul>
+                    </div>
+                );
+            }
+- **Mounted & Unmounted**(Gắn vào và gỡ ra)
+    - Là thuật ngữ khi ta tạo ra một thẻ và ẩn nó đi trên UI
+- **useEffect hook**
