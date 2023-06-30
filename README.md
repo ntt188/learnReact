@@ -137,3 +137,72 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
         - <YourComponent>String literals</YourComponent>
         - <YourComponent>{expression}</YourComponent>
     - Render props (render-props.html)
+## 3. Creat React App (folder 3)
+- Tạo dự án với React + Webpack
+- Tạo dự án với creat-react-app
+- NPM, NPX và YARN là gì?
+    - NPM
+        - project scope
+            - npm install react react-dom --save => dependencies
+            - npm i react react-dom => dependencies 
+
+            - npm install --save-dev react react-dom => devDependencies
+            - npm i -D react react-dom => devDependencies
+
+            Xóa dự án
+            - npm uninstall react react-dom
+        - global scope
+            - npm i --global creat-react-app
+            - npm i -g creat-react-app
+
+            gỡ
+            - npm uninstall -g creat-react-app
+    - NPX
+        - tại sao dùng NPX?
+            đỡ phải cài những thư viện này lên máy
+        - Gặp lỗi khi: npx create-react-app tiktok
+    - YARN & NPM
+    - YARN install
+    - Lưu ý:
+        - Luôn bật development server (npm start || yarn start)
+- CRA Folder Struture
+## 4. Hooks
+- **Hooks là gì ?**
+    gắn vào hay móc vào
+    là những hàm được viết sẵn đc cũng cấp sẵn bởi reactjs
+    1. chỉ dùng cho function component
+    2. Component đơn giản và trở nên dễ hiểu
+        - Không bị chia logic ra như method trong lifecycle của Class Component
+        - Không cần sử dung "this"
+    3. Sử dụng Hooks khi nào?
+        - Dự án mới => Hooks
+        - Dự án cũ 
+            - Component mới => function component + Hooks
+            - Component cũ => Giữ nguyên có time tối ưu sau
+        - Logic nghiệp vụ cần sử dụng các tính chất của OOP => Class Component
+    4. Người mới nên bát đầu từ Function hay Class Component?
+        Func
+    5. Có kết hợp sử dụng Function component & Class component được không?
+        Được
+- **useState hook**
+    - Dùng khi nào?
+        Khi muốn dữ liệu thay đổi thì giao diện tự động được 
+        cập nhật (render lại theo dữ liệu).
+
+    - Cách dùng
+        ```jsx 
+        import { userState } from 'react'
+
+        function Component() {
+            cons [state, setState] = useState(initState)
+
+            ...
+        }
+        ```
+
+    - Lưu ý
+        - Component được re-render sau khi `setState`
+        - Innitial state chỉ dùng cho lần đầu
+        - Set state với callback?
+        - Innitial state với callback?
+        - Set state là thay thế state bằng giá trị mới 
