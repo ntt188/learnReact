@@ -199,18 +199,91 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
             ...
         }
         ```
-
     - Lưu ý
         - Component được re-render sau khi `setState`
         - Innitial state chỉ dùng cho lần đầu
         - Set state với callback?
         - Innitial state với callback?
         - Set state là thay thế state bằng giá trị mới 
+    - Two-way binding trong React? **https://reactgo.com/two-way-data-binding-react/**
+        - Lưu ý:
+            1. Array
+            2. Reference types
+        - Ví dụ:
+            1. Random gift
+                ```jsx
+                import { useState } from "react";
+
+                const gifts = [
+                'CPU i9',
+                'RAM 32GB RGB',
+                'RGB Keyboard'
+                ]
+
+                function App() {
+                const [gift, setGift] = useState();
+
+                const randomGift = () => {
+                    const index = Math.floor(Math.random() * gifts.length)
+                
+                    setGift(gifts[index]);
+                }
+
+                return (
+                    <div className="App" style={{padding:32}}>
+                    <h1>{gift || 'Chưa có phần thưởng'}</h1>
+                    <button onClick={randomGift}>Lây thưởng</button>      
+                    </div>
+                );
+                }
+
+                export default App;
+                ```
+            2. Two-way binding
+                * Input:
+                    ```jsx
+                    import { useState } from "react";
+
+                    function App() {
+                    const [name, setName] = useState('');
+                    const [email, setEmail] = useState('');
+
+                    const handSubmit = () => {
+                        //CALL API
+                        console.log({
+                        name,
+                        email
+                        })
+                    }
+
+                    return (
+                        <div className="App" style={{padding:32}}>
+                        <input 
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                        />
+                        <input 
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                        />
+                        <button onClick={handSubmit}>Register</button>
+                        </div>
+                    );
+                    }
+
+                    export default App;
+                    ```
+                *
+            3. Todolish
     - Bài tập:
         **Lưu ý:** nhớ import thư viện cần dùng "import { useState } from "react"
         1. Tăng thêm 1 đơn vị mỗi lần click vào button:
             ```jsx
+            import { useState } from "react";
+
             function App() {
+                const [counter, setCounter] = useState(1);
+
                 const handleIncrease = () => {
                     setCounter(counter + 1)
                 }
@@ -222,9 +295,13 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
                     </div>
                 );
             }
+
+            export default App;
             ```
         2. Todolish:
             ```jsx
+            import { useState } from "react";
+            
             function App() {
                 const [jobs, setJobs] = useState(() => {
                     const storageJobs = JSON.parse(localStorage.getItem('jobs'));
@@ -257,6 +334,8 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
                     </div>
                 );
             }
+
+            export default App;
             ```
 - **Mounted & Unmounted**(Gắn vào và gỡ ra)
     - Là thuật ngữ khi ta tạo ra một thẻ và ẩn nó đi trên UI
