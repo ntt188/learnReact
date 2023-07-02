@@ -273,8 +273,113 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
 
                     export default App;
                     ```
-                *
-            3. Todolish
+                * radio:
+                    ```jsx
+                    import { useState } from "react";
+
+                    // Response from API
+                    const courses = [
+                    {
+                        id: 1,
+                        name: 'HTML, CSS'
+                    },
+                    {
+                        id: 2,
+                        name: 'Javascrip'
+                    },
+                    {
+                        id: 3,
+                        name: 'ReactJS'
+                    }
+                    ]
+
+                    function App() {
+                    const [checked, setChecked] = useState()
+                    
+                    const handSubmit = () => {
+                        console.log({id: checked})
+                    }
+
+                    return (
+                        <div className="App" style={{padding:32}}>
+                        {courses.map(course => (
+                            <div key={course.id}>
+                            <input 
+                                type="radio" 
+                                checked={checked === course.id}
+                                onChange={() => setChecked(course.id)}
+                            />
+                            {course.name}
+                            </div>
+                        ))}
+                        <button onClick={handSubmit}>Register</button>
+                        </div>
+                    );
+                    }
+
+                    export default App;
+                    ```
+                * checkbox
+                    ```jsx
+                    import { useState } from "react";
+
+                    // Response from API
+                    const courses = [
+                    {
+                        id: 1,
+                        name: 'HTML, CSS'
+                    },
+                    {
+                        id: 2,
+                        name: 'Javascrip'
+                    },
+                    {
+                        id: 3,
+                        name: 'ReactJS'
+                    }
+                    ]
+
+                    function App() {
+                    const [checked, setChecked] = useState([])
+                    console.log(checked)
+                    
+                    const handleCheck = (id) => {
+                        setChecked(prev => {
+                        const isChecked = checked.includes(id)
+
+                        if(isChecked) {
+                            return checked.filter(item => item !== id)
+                        } else {
+                            return [...prev, id]
+                        }
+                        })
+                    }
+
+                    const handSubmit = () => {
+                        //Call API
+                        console.log({ids: checked})
+                    }
+
+                    return (
+                        <div className="App" style={{padding:32}}>
+                        {courses.map(course => (
+                            <div key={course.id}>
+                            <input 
+                                type="checkbox" 
+                                checked={checked.includes(course.id)}
+                                onChange={() => handleCheck(course.id)}
+                            />
+                            {course.name}
+                            </div>
+                        ))}
+                        <button onClick={handSubmit}>Register</button>
+                        </div>
+                    );
+                    }
+
+                    export default App;
+                    ```
+            3. Todolish: ***Làm dưới phần bài tập***
     - Bài tập:
         **Lưu ý:** nhớ import thư viện cần dùng "import { useState } from "react"
         1. Tăng thêm 1 đơn vị mỗi lần click vào button:
