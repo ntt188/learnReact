@@ -444,4 +444,32 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
             ```
 - **Mounted & Unmounted**(Gắn vào và gỡ ra)
     - Là thuật ngữ khi ta tạo ra một thẻ và ẩn nó đi trên UI
+        * Tạo một file **Content.js** tại thư mục **src**
+            ```jsx
+            function Content() {
+                return (
+                    <h1>Xin chào mọi người</h1>
+                )
+            }
+
+            export default Content
+            ```
+        * Tại file **App.js**
+            ```jsx
+            import { useState } from "react";
+            import Content from "./Content";
+
+            function App() {
+                const [show, setShow] = useState(false);
+
+                return (
+                    <div className="App" style={{padding:32}}>
+                    <button onClick={() => setShow(!show)}>Togger</button>
+                    {show && <Content />}
+                    </div>
+                );
+                }
+
+                export default App;
+            ```
 - **useEffect hook**
