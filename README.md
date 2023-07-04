@@ -184,292 +184,346 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
         Func
     5. Có kết hợp sử dụng Function component & Class component được không?
         Được
-- **useState hook**
-    - Dùng khi nào?
-        Khi muốn dữ liệu thay đổi thì giao diện tự động được 
-        cập nhật (render lại theo dữ liệu).
+### useState hook
+- Dùng khi nào?
+    Khi muốn dữ liệu thay đổi thì giao diện tự động được 
+    cập nhật (render lại theo dữ liệu).
 
-    - Cách dùng
-        ```jsx 
-        import { userState } from 'react'
+- Cách dùng
+    ```jsx 
+    import { userState } from 'react'
 
-        function Component() {
-            cons [state, setState] = useState(initState)
+    function Component() {
+        cons [state, setState] = useState(initState)
 
-            ...
-        }
-        ```
-    - Lưu ý
-        - Component được re-render sau khi `setState`
-        - Innitial state chỉ dùng cho lần đầu
-        - Set state với callback?
-        - Innitial state với callback?
-        - Set state là thay thế state bằng giá trị mới 
-    - Two-way binding trong React? **https://reactgo.com/two-way-data-binding-react/**
-        - Lưu ý:
-            1. Array
-            2. Reference types
-        - Ví dụ:
-            1. Random gift
+        ...
+    }
+    ```
+- Lưu ý
+    - Component được re-render sau khi `setState`
+    - Innitial state chỉ dùng cho lần đầu
+    - Set state với callback?
+    - Innitial state với callback?
+    - Set state là thay thế state bằng giá trị mới 
+- Two-way binding trong React? **https://reactgo.com/two-way-data-binding-react/**
+    - Lưu ý:
+        1. Array
+        2. Reference types
+    - Ví dụ:
+        1. Random gift
+            ```jsx
+            import { useState } from "react";
+
+            const gifts = [
+            'CPU i9',
+            'RAM 32GB RGB',
+            'RGB Keyboard'
+            ]
+
+            function App() {
+            const [gift, setGift] = useState();
+
+            const randomGift = () => {
+                const index = Math.floor(Math.random() * gifts.length)
+            
+                setGift(gifts[index]);
+            }
+
+            return (
+                <div className="App" style={{padding:32}}>
+                <h1>{gift || 'Chưa có phần thưởng'}</h1>
+                <button onClick={randomGift}>Lây thưởng</button>      
+                </div>
+            );
+            }
+
+            export default App;
+            ```
+        2. Two-way binding
+            * Input:
                 ```jsx
                 import { useState } from "react";
 
-                const gifts = [
-                'CPU i9',
-                'RAM 32GB RGB',
-                'RGB Keyboard'
-                ]
-
                 function App() {
-                const [gift, setGift] = useState();
+                const [name, setName] = useState('');
+                const [email, setEmail] = useState('');
 
-                const randomGift = () => {
-                    const index = Math.floor(Math.random() * gifts.length)
-                
-                    setGift(gifts[index]);
+                const handSubmit = () => {
+                    //CALL API
+                    console.log({
+                    name,
+                    email
+                    })
                 }
 
                 return (
                     <div className="App" style={{padding:32}}>
-                    <h1>{gift || 'Chưa có phần thưởng'}</h1>
-                    <button onClick={randomGift}>Lây thưởng</button>      
+                    <input 
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                    />
+                    <input 
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                    />
+                    <button onClick={handSubmit}>Register</button>
                     </div>
                 );
                 }
 
                 export default App;
                 ```
-            2. Two-way binding
-                * Input:
-                    ```jsx
-                    import { useState } from "react";
+            * radio:
+                ```jsx
+                import { useState } from "react";
 
-                    function App() {
-                    const [name, setName] = useState('');
-                    const [email, setEmail] = useState('');
-
-                    const handSubmit = () => {
-                        //CALL API
-                        console.log({
-                        name,
-                        email
-                        })
-                    }
-
-                    return (
-                        <div className="App" style={{padding:32}}>
-                        <input 
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                        />
-                        <input 
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                        />
-                        <button onClick={handSubmit}>Register</button>
-                        </div>
-                    );
-                    }
-
-                    export default App;
-                    ```
-                * radio:
-                    ```jsx
-                    import { useState } from "react";
-
-                    // Response from API
-                    const courses = [
-                    {
-                        id: 1,
-                        name: 'HTML, CSS'
-                    },
-                    {
-                        id: 2,
-                        name: 'Javascrip'
-                    },
-                    {
-                        id: 3,
-                        name: 'ReactJS'
-                    }
-                    ]
-
-                    function App() {
-                    const [checked, setChecked] = useState()
-                    
-                    const handSubmit = () => {
-                        console.log({id: checked})
-                    }
-
-                    return (
-                        <div className="App" style={{padding:32}}>
-                        {courses.map(course => (
-                            <div key={course.id}>
-                            <input 
-                                type="radio" 
-                                checked={checked === course.id}
-                                onChange={() => setChecked(course.id)}
-                            />
-                            {course.name}
-                            </div>
-                        ))}
-                        <button onClick={handSubmit}>Register</button>
-                        </div>
-                    );
-                    }
-
-                    export default App;
-                    ```
-                * checkbox
-                    ```jsx
-                    import { useState } from "react";
-
-                    // Response from API
-                    const courses = [
-                    {
-                        id: 1,
-                        name: 'HTML, CSS'
-                    },
-                    {
-                        id: 2,
-                        name: 'Javascrip'
-                    },
-                    {
-                        id: 3,
-                        name: 'ReactJS'
-                    }
-                    ]
-
-                    function App() {
-                    const [checked, setChecked] = useState([])
-                    console.log(checked)
-                    
-                    const handleCheck = (id) => {
-                        setChecked(prev => {
-                        const isChecked = checked.includes(id)
-
-                        if(isChecked) {
-                            return checked.filter(item => item !== id)
-                        } else {
-                            return [...prev, id]
-                        }
-                        })
-                    }
-
-                    const handSubmit = () => {
-                        //Call API
-                        console.log({ids: checked})
-                    }
-
-                    return (
-                        <div className="App" style={{padding:32}}>
-                        {courses.map(course => (
-                            <div key={course.id}>
-                            <input 
-                                type="checkbox" 
-                                checked={checked.includes(course.id)}
-                                onChange={() => handleCheck(course.id)}
-                            />
-                            {course.name}
-                            </div>
-                        ))}
-                        <button onClick={handSubmit}>Register</button>
-                        </div>
-                    );
-                    }
-
-                    export default App;
-                    ```
-            3. Todolish: ***Làm dưới phần bài tập***
-    - Bài tập:
-        **Lưu ý:** nhớ import thư viện cần dùng "import { useState } from "react"
-        1. Tăng thêm 1 đơn vị mỗi lần click vào button:
-            ```jsx
-            import { useState } from "react";
-
-            function App() {
-                const [counter, setCounter] = useState(1);
-
-                const handleIncrease = () => {
-                    setCounter(counter + 1)
+                // Response from API
+                const courses = [
+                {
+                    id: 1,
+                    name: 'HTML, CSS'
+                },
+                {
+                    id: 2,
+                    name: 'Javascrip'
+                },
+                {
+                    id: 3,
+                    name: 'ReactJS'
                 }
+                ]
+
+                function App() {
+                const [checked, setChecked] = useState()
                 
-                return (
-                    <div className="App" style={{padding:32}}>
-                        <h1>{counter}</h1>
-                        <button onClick={handleIncrease}>Increase</button>
-                    </div>
-                );
-            }
-
-            export default App;
-            ```
-        2. Todolish:
-            ```jsx
-            import { useState } from "react";
-            
-            function App() {
-                const [jobs, setJobs] = useState(() => {
-                    const storageJobs = JSON.parse(localStorage.getItem('jobs'));
-                    return storageJobs || []
-                });
-                const [job, setJob] = useState('');
-
-                const handleSubmit = () => {
-                    setJobs(arr => {
-                    const newJobs = [...arr, job];
-
-                    //save to local storage
-                    const jsonJobs = JSON.stringify(newJobs);
-                    localStorage.setItem('jobs', jsonJobs);
-
-                    return newJobs;
-                    });
-                    setJob('');
+                const handSubmit = () => {
+                    console.log({id: checked})
                 }
 
-                
                 return (
                     <div className="App" style={{padding:32}}>
-                        <input value={job} onChange={e => setJob(e.target.value)} />
-                        <button onClick={handleSubmit}>Add</button>
-
-                        <ul>
-                            {jobs.map((job, key) => <li key={key}>{job}</li>)}
-                        </ul>
-                    </div>
-                );
-            }
-
-            export default App;
-            ```
-- **Mounted & Unmounted**(Gắn vào và gỡ ra)
-    - Là thuật ngữ khi ta tạo ra một thẻ và ẩn nó đi trên UI
-        * Tạo một file **Content.js** tại thư mục **src**
-            ```jsx
-            function Content() {
-                return (
-                    <h1>Xin chào mọi người</h1>
-                )
-            }
-
-            export default Content
-            ```
-        * Tại file **App.js**
-            ```jsx
-            import { useState } from "react";
-            import Content from "./Content";
-
-            function App() {
-                const [show, setShow] = useState(false);
-
-                return (
-                    <div className="App" style={{padding:32}}>
-                    <button onClick={() => setShow(!show)}>Togger</button>
-                    {show && <Content />}
+                    {courses.map(course => (
+                        <div key={course.id}>
+                        <input 
+                            type="radio" 
+                            checked={checked === course.id}
+                            onChange={() => setChecked(course.id)}
+                        />
+                        {course.name}
+                        </div>
+                    ))}
+                    <button onClick={handSubmit}>Register</button>
                     </div>
                 );
                 }
 
                 export default App;
-            ```
-- **useEffect hook**
+                ```
+            * checkbox
+                ```jsx
+                import { useState } from "react";
+
+                // Response from API
+                const courses = [
+                {
+                    id: 1,
+                    name: 'HTML, CSS'
+                },
+                {
+                    id: 2,
+                    name: 'Javascrip'
+                },
+                {
+                    id: 3,
+                    name: 'ReactJS'
+                }
+                ]
+
+                function App() {
+                const [checked, setChecked] = useState([])
+                console.log(checked)
+                
+                const handleCheck = (id) => {
+                    setChecked(prev => {
+                    const isChecked = checked.includes(id)
+
+                    if(isChecked) {
+                        return checked.filter(item => item !== id)
+                    } else {
+                        return [...prev, id]
+                    }
+                    })
+                }
+
+                const handSubmit = () => {
+                    //Call API
+                    console.log({ids: checked})
+                }
+
+                return (
+                    <div className="App" style={{padding:32}}>
+                    {courses.map(course => (
+                        <div key={course.id}>
+                        <input 
+                            type="checkbox" 
+                            checked={checked.includes(course.id)}
+                            onChange={() => handleCheck(course.id)}
+                        />
+                        {course.name}
+                        </div>
+                    ))}
+                    <button onClick={handSubmit}>Register</button>
+                    </div>
+                );
+                }
+
+                export default App;
+                ```
+        3. Todolish: ***Làm dưới phần bài tập***
+- Bài tập:
+    **Lưu ý:** nhớ import thư viện cần dùng "import { useState } from "react"
+    1. Tăng thêm 1 đơn vị mỗi lần click vào button:
+        ```jsx
+        import { useState } from "react";
+
+        function App() {
+            const [counter, setCounter] = useState(1);
+
+            const handleIncrease = () => {
+                setCounter(counter + 1)
+            }
+            
+            return (
+                <div className="App" style={{padding:32}}>
+                    <h1>{counter}</h1>
+                    <button onClick={handleIncrease}>Increase</button>
+                </div>
+            );
+        }
+
+        export default App;
+        ```
+    2. Todolish:
+        ```jsx
+        import { useState } from "react";
+        
+        function App() {
+            const [jobs, setJobs] = useState(() => {
+                const storageJobs = JSON.parse(localStorage.getItem('jobs'));
+                return storageJobs || []
+            });
+            const [job, setJob] = useState('');
+
+            const handleSubmit = () => {
+                setJobs(arr => {
+                const newJobs = [...arr, job];
+
+                //save to local storage
+                const jsonJobs = JSON.stringify(newJobs);
+                localStorage.setItem('jobs', jsonJobs);
+
+                return newJobs;
+                });
+                setJob('');
+            }
+
+            
+            return (
+                <div className="App" style={{padding:32}}>
+                    <input value={job} onChange={e => setJob(e.target.value)} />
+                    <button onClick={handleSubmit}>Add</button>
+
+                    <ul>
+                        {jobs.map((job, key) => <li key={key}>{job}</li>)}
+                    </ul>
+                </div>
+            );
+        }
+
+        export default App;
+        ```
+### Mounted & Unmounted (Gắn vào và gỡ ra)
+- Là thuật ngữ khi ta tạo ra một thẻ và ẩn nó đi trên UI
+    * Tạo một file **Content.js** tại thư mục **src**
+        ```jsx
+        function Content() {
+            return (
+                <h1>Xin chào mọi người</h1>
+            )
+        }
+
+        export default Content
+        ```
+    * Tại file **App.js**
+        ```jsx
+        import { useState } from "react";
+        import Content from "./Content";
+
+        function App() {
+            const [show, setShow] = useState(false);
+
+            return (
+                <div className="App" style={{padding:32}}>
+                <button onClick={() => setShow(!show)}>Togger</button>
+                {show && <Content />}
+                </div>
+            );
+            }
+
+            export default App;
+        ```
+### useEffect hook
+- Side Effect: là khi ta tác động xảy ra dẫn tới dữ liệu bị thay đổi.
+- Kiến thức cần có:
+    - Events: Add / remove event listener
+    - Observer pattern: Subscribe / unsubscribe
+    - Closure
+    - Timers: setInterval, setTimeout, clearInterval, clearTimeout
+    - useState
+    - Mounted / Unmounted
+    - ===
+    - Call API
+- Những thứ cần làm được
+    1. Update DOM
+        - F8 blog title
+        **Dùng lại file App.js của Mounted & Unmounted ở trên**
+        * Tạo một file **Content.js** tại thư mục **src**
+        ```jsx
+        import { useEffect, useState } from "react"
+
+        // 1.  userEffect(callback)
+        // - Gọi callback mỗi khi component re-render
+        // - Gọi callback sau khi component thêm element vào DOM
+        // 2.  userEffect(callback, [])
+        // 3.  userEffect(callback, [deps])
+
+        // ----------Lý thuyết chung------------------
+        // 1. Callback luôn được gọi sau khi component mounted
+
+        function Content() {
+
+            const [title, setTitle] = useState('')
+
+            useEffect(() => {
+                document.title = title
+            })
+
+            return (
+                <div>
+                    <input 
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                    />
+                </div>
+            )
+        }
+
+        export default Content
+        ```
+    2. Call API **truy cập (https://jsonplaceholder.typicode.com/) để lấy API về test**
+    3. Listen DOM event
+        - Scroll
+        - Resize
+    4. Clearup
+        - Remove listener / Unsubscribe
+        - Clear timer
