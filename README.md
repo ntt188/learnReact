@@ -483,15 +483,19 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
     - Mounted / Unmounted
     - ===
     - Call API
+- Có 3 cách dùng useEffect:
+    1.  userEffect(callback)
+    2.  userEffect(callback, [])
+    3.  userEffect(callback, [deps])
 - Những thứ cần làm được
     1. Update DOM
-        - F8 blog title
+        - F8 blog title (sử dụng **userEffect(callback)**)
         **Dùng lại file App.js của Mounted & Unmounted ở trên**
         * Tạo một file **Content.js** tại thư mục **src**
         ```jsx
         import { useEffect, useState } from "react"
 
-        // 1.  userEffect(callback)
+        // 1*.  userEffect(callback)
         // - Gọi callback mỗi khi component re-render
         // - Gọi callback sau khi component thêm element vào DOM
         // 2.  userEffect(callback, [])
@@ -521,9 +525,249 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
         export default Content
         ```
     2. Call API **truy cập (https://jsonplaceholder.typicode.com/) để lấy API về test**
+        **Dùng lại file App.js của Mounted & Unmounted ở trên**
+        * Tạo một file **Content.js** tại thư mục **src**
+        * (sử dụng **userEffect(callback, [])**)
+        ```jsx
+        import { useEffect, useState } from "react"
+
+        // 1.  userEffect(callback)
+        // - Gọi callback mỗi khi component re-render
+        // - Gọi callback sau khi component thêm element vào DOM
+        // 2*.  userEffect(callback, [])
+        // - Chỉ gọi callback 1 lần sau khi component mounted
+        // - Sử dụng khi bạn muốn thực hiện 1 logic gì 1 lần khi component được mounted ko muốn nó gọi lại khi re-render
+        // 3.  userEffect(callback, [deps])
+
+        // ----------Lý thuyết chung------------------
+        // 1. Callback luôn được gọi sau khi component mounted
+
+        function Content() {
+
+            const [title, setTitle] = useState('')
+            const [posts, setPosts] = useState([])
+
+            useEffect(() => {
+                fetch('https://jsonplaceholder.typicode.com/posts')
+                    .then(res => res.json())
+                    .then(posts => {
+                        setPosts(posts)
+                    })
+            }, [])
+
+            return (
+                <div>
+                    <input 
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                    />
+                    <ul>
+                        {posts.map(post => (
+                            <li key={post.id}>{post.title}</li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+
+        export default Content
+        ```
+        * Tạo một file **Content.js** tại thư mục **src**
+        * (sử dụng **userEffect(callback, [deps])**)
+        ```jsx
+        import { useEffect, useState } from "react"
+
+        // 1.  userEffect(callback)
+        // - Gọi callback mỗi khi component re-render
+        // - Gọi callback sau khi component thêm element vào DOM
+        // 2.  userEffect(callback, [])
+        // - Chỉ gọi callback 1 lần sau khi component mounted
+        // - Sử dụng khi bạn muốn thực hiện 1 logic gì 1 lần khi component được mounted ko muốn nó gọi lại khi re-render
+        // 3.  userEffect(callback, [deps])
+        // - Callback sẽ được gọi lại mỗi khi deps thay đổi
+
+        // ----------Lý thuyết chung------------------
+        // 1. Callback luôn được gọi sau khi component mounted
+
+        const tabs = ['posts', 'comments', 'albums']
+
+        function Content() {
+
+            const [title, setTitle] = useState('')
+            const [posts, setPosts] = useState([])
+            const [type, setType] = useState('posts')
+
+            useEffect(() => {
+                fetch(`https://jsonplaceholder.typicode.com/${type}`)
+                    .then(res => res.json())
+                    .then(posts => {
+                        setPosts(posts)
+                    })
+            }, [type])
+
+            return (
+                <div>
+                    {tabs.map(tab => (
+                        <button 
+                            key={tab}
+                            style={type === tab ? {
+                                color: '#fff',
+                                backgroundColor: '#333'
+                            } : {}}
+                            onClick={() => setType(tab)}
+                        >
+                            {tab}
+                        </button>
+                    ))}
+                    <input 
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                    />
+                    <ul>
+                        {posts.map(post => (
+                            <li key={post.id}>{post.title || post.name}</li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+
+        export default Content
+        ```
     3. Listen DOM event
         - Scroll
+            **Dùng lại file App.js của Mounted & Unmounted ở trên**
+            * Tạo một file **Content.js** tại thư mục **src**
+            ```js
+            import { useEffect, useState } from "react"
+
+            // 1.  userEffect(callback)
+            // - Gọi callback mỗi khi component re-render
+            // - Gọi callback sau khi component thêm element vào DOM
+            // 2.  userEffect(callback, [])
+            // - Chỉ gọi callback 1 lần sau khi component mounted
+            // - Sử dụng khi bạn muốn thực hiện 1 logic gì 1 lần khi component được mounted ko muốn nó gọi lại khi re-render
+            // 3.  userEffect(callback, [deps])
+            // - Callback sẽ được gọi lại mỗi khi deps thay đổi
+
+            // ----------Lý thuyết chung------------------
+            // 1. Callback luôn được gọi sau khi component mounted
+            // 2. Clearup function luôn được gọi trước khi component unmounted (tránh rò rỉ bộ nhớ)
+
+            const tabs = ['posts', 'comments', 'albums']
+
+            function Content() {
+
+                const [posts, setPosts] = useState([])
+                const [type, setType] = useState('posts')
+                const [showGoToTop, setShowGoToTop] = useState(false)
+
+                useEffect(() => {
+                    fetch(`https://jsonplaceholder.typicode.com/${type}`)
+                        .then(res => res.json())
+                        .then(posts => {
+                            setPosts(posts)
+                        })
+                }, [type])
+
+                useEffect(() => {
+
+                    const handleScroll = () => {
+                        if(window.scrollY >= 200){
+                            setShowGoToTop(true)
+                        } else {
+                            setShowGoToTop(false)
+                        }
+                    }
+
+                    window.addEventListener('scroll', handleScroll)
+
+                    // Clearup function (tránh rò rỉ bộ nhớ khi ta mounted một component mới)
+                    return () => {
+                        window.removeEventListener('scroll', handleScroll)
+                    }
+                }, [])
+
+                return (
+                    <div>
+                        {tabs.map(tab => (
+                            <button 
+                                key={tab}
+                                style={type === tab ? {
+                                    color: '#fff',
+                                    backgroundColor: '#333'
+                                } : {}}
+                                onClick={() => setType(tab)}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                        <ul>
+                            {posts.map(post => (
+                                <li key={post.id}>{post.title || post.name}</li>
+                            ))}
+                        </ul>
+                        {showGoToTop && (
+                            <button
+                                style={{
+                                    position: 'fixed',
+                                    right: 20,
+                                    bottom: 20
+                                }}
+                            >
+                                Go to Top
+                            </button>
+                        )}
+                    </div>
+                )
+            }
+
+            export default Content
+            ```
         - Resize
+            **Dùng lại file App.js của Mounted & Unmounted ở trên**
+            * Tạo một file **Content.js** tại thư mục **src**
+            ```jsx
+            import { useEffect, useState } from "react"
+
+            // 1.  userEffect(callback)
+            // - Gọi callback mỗi khi component re-render
+            // - Gọi callback sau khi component thêm element vào DOM
+            // 2.  userEffect(callback, [])
+            // - Chỉ gọi callback 1 lần sau khi component mounted
+            // - Sử dụng khi bạn muốn thực hiện 1 logic gì 1 lần khi component được mounted ko muốn nó gọi lại khi re-render
+            // 3.  userEffect(callback, [deps])
+            // - Callback sẽ được gọi lại mỗi khi deps thay đổi
+
+            // ----------Lý thuyết chung------------------
+            // 1. Callback luôn được gọi sau khi component mounted
+            // 2. Clearup function luôn được gọi trước khi component unmounted (tránh rò rỉ bộ nhớ)
+
+            function Content() {
+
+                const [width, setWidth] = useState(window.innerWidth)
+
+                useEffect(() => {
+                    const handleResize = () => {
+                        setWidth(window.innerWidth)
+                    }
+
+                    window.addEventListener('resize', handleResize)
+
+                    return () => {
+                        window.removeEventListener('resize', handleResize)
+                    }
+                }, [])
+
+                return (
+                    <div>
+                        <h1>{width}</h1>
+                    </div>
+                )
+            }
+
+            export default Content
+            ```
     4. Clearup
         - Remove listener / Unsubscribe
         - Clear timer
