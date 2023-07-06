@@ -1014,3 +1014,54 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
 
     export default Content
     ```
+### useRef hook
+* **Chỉ sử dụng giá trị khởi tạo trong lần đầu tiên render**
+* **Hàm này luôn trả về giá trị là một object** có key là **current**
+    ```js
+    import { useEffect, useRef, useState } from "react";
+
+    // Lưu các giá trị qua một tham chiếu bên ngoài
+    // function component
+
+    function App() {
+        const [count, setCount] = useState(60)
+
+        const timerId = useRef()
+        const prevCount = useRef()
+        const h1Ref = useRef()
+
+        // Lưu giá trị trước đó khi thay đổi
+        useEffect(() => {
+            prevCount.current = count
+        }, [count])
+
+        // lấy ra vị trí của element
+        useEffect(() => {
+            const rect = h1Ref.current.getBoundingClientRect()
+
+            console.log(rect)
+        })
+
+        const handleStart = () => {
+            timerId.current = setInterval(() => {
+            setCount(prevCount => prevCount - 1)
+            }, 1000)
+        }
+
+        const handleStop = () => {
+            clearInterval(timerId.current)
+        }
+
+        console.log(count, prevCount.current)
+
+        return (
+            <div style={{padding: 20}}>
+                <h1 ref={h1Ref}>{count}</h1>
+                <button onClick={handleStart}>Start</button>
+                <button onClick={handleStop}>Stop</button>
+            </div>
+        )
+    }
+
+    export default App;
+    ```
