@@ -771,3 +771,246 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
     4. Clearup
         - Remove listener / Unsubscribe
         - Clear timer
+        **Dùng lại file App.js của Mounted & Unmounted ở trên**
+        * Tạo một file **Content.js** tại thư mục **src**
+        ```jsx
+        import { useEffect, useState } from "react"
+
+        // 1.  userEffect(callback)
+        // - Gọi callback mỗi khi component re-render
+        // - Gọi callback sau khi component thêm element vào DOM
+        // 2.  userEffect(callback, [])
+        // - Chỉ gọi callback 1 lần sau khi component mounted
+        // - Sử dụng khi bạn muốn thực hiện 1 logic gì 1 lần khi component được mounted ko muốn nó gọi lại khi re-render
+        // 3.  userEffect(callback, [deps])
+        // - Callback sẽ được gọi lại mỗi khi deps thay đổi
+
+        // ----------Lý thuyết chung------------------
+        // 1. Callback luôn được gọi sau khi component mounted
+        // 2. Clearup function luôn được gọi trước khi component unmounted (tránh rò rỉ bộ nhớ)
+        // 3. Clearup function luôn được gọi trước khi callback được gọi (trừ lần mounted)
+
+        function Content() {
+
+            const [countdown, setCountdown] = useState(100)
+
+            // Sử dụng setInterval
+            useEffect(() => {
+                const timerId = setInterval(() => {
+                    setCountdown(prev => prev - 1)
+                }, 1000)
+
+                return () => clearInterval(timerId)
+            }, [])
+
+            // sử dung
+            // useEffect(() => {
+            //     const timerId = setTimeout(() => {
+            //         setCountdown(countdown - 1)
+            //     }, 1000)
+
+            //     return () => clearTimeout(timerId)
+            // }, [countdown])
+
+            return (
+                <div>
+                    <h1>{countdown}</h1>
+                </div>
+            )
+        }
+
+        export default Content
+        ```   
+        1. Preview avatar **Khắc phục tình trạng thay đổi những vẫn lưu trong bộ nhớ của dữ liệu cũ** (lever senior)
+            ```jsx
+            import { useEffect, useState } from "react"
+
+            // 1.  userEffect(callback)
+            // - Gọi callback mỗi khi component re-render
+            // - Gọi callback sau khi component thêm element vào DOM
+            // 2.  userEffect(callback, [])
+            // - Chỉ gọi callback 1 lần sau khi component mounted
+            // - Sử dụng khi bạn muốn thực hiện 1 logic gì 1 lần khi component được mounted ko muốn nó gọi lại khi re-render
+            // 3.  userEffect(callback, [deps])
+            // - Callback sẽ được gọi lại mỗi khi deps thay đổi
+
+            // ----------Lý thuyết chung------------------
+            // 1. Callback luôn được gọi sau khi component mounted
+            // 2. Clearup function luôn được gọi trước khi component unmounted (tránh rò rỉ bộ nhớ)
+            // 3. Clearup function luôn được gọi trước khi callback được gọi (trừ lần mounted)
+
+            function Content() {
+
+                const [avata, setAvata] = useState()
+
+                useEffect(() => {
+
+
+                    //Cleanup
+                    return () => {
+                        avata && URL.revokeObjectURL(avata.preview)
+                    }
+                }, [avata])
+
+                const handlePreviewAvatar = (e) => {
+                    const file = e.target.files[0]
+
+                    file.preview = URL.createObjectURL(file)
+
+                    setAvata(file)
+                }
+
+                return (
+                    <div>
+                        <input 
+                            type="file"
+                            onChange={handlePreviewAvatar}
+                        />
+                        {avata && (
+                            <img src={avata.preview} alt="" width="80%"/>
+                        )}
+                    </div>
+                )
+            }
+
+            export default Content
+            ```
+        2. useEffect with fake Chat App
+        **Dùng lại file App.js của Mounted & Unmounted ở trên**
+        * Tạo một file **Content.js** tại thư mục **src**
+        ```jsx
+        import { useEffect, useState } from "react"
+
+        const lessons = [
+            {
+                id: 1,
+                name: 'ReactJS là gì? Tại sao nên học ReactJS?'
+            },
+            {
+                id: 2,
+                name: 'SPA/MPA là gì?'
+            },
+            {
+                id: 3,
+                name: 'Arrow function'
+            }
+        ]
+
+        function Content() {
+
+            const [lessonId, setLessonId] = useState(1)
+
+            useEffect(() => {
+
+                const handleComment = ({detail}) => {
+                    console.log(detail);
+                }
+
+                window.addEventListener(`lesson-${lessonId}`, handleComment)
+
+                return () => {
+                    window.removeEventListener(`lesson-${lessonId}`, handleComment)
+                }
+            }, [lessonId])
+
+            return (
+                <div>
+                    <ul>
+                        {lessons.map(lesson => (
+                            <li
+                                key={lesson.id}
+                                style={{
+                                    color: lessonId ===lesson.id ?
+                                        'red' :
+                                        '#333'
+                                }}
+                                onClick={() => setLessonId(lesson.id)}
+                            >
+                                {lesson.name}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+
+        export default Content
+        ```
+        * Tại file **index.js** tạo một function event emitComment để fake comment
+        ```jsx
+        import React from 'react';
+        import ReactDOM from 'react-dom/client';
+        import './index.css';
+        import App from './App';
+        import reportWebVitals from './reportWebVitals';
+
+        // Fake comments
+        function emitComment(id) {
+
+        setInterval(() => {
+            window.dispatchEvent(
+            new CustomEvent(`lesson-${id}`, {
+                detail: `Nội dung Comment của lesson ${id}`
+            })
+            )
+        }, 2000)
+
+        }
+
+        emitComment(1)
+        emitComment(2)
+        emitComment(3)
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(
+        <React.StrictMode>
+            <App />
+        </React.StrictMode>
+        );
+
+        // If you want to start measuring performance in your app, pass a function
+        // to log results (for example: reportWebVitals(console.log))
+        // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+        reportWebVitals();
+        ```
+* Thứ tự công việc được làm:
+    1. Cập nhật lại state
+    2. Cập nhật lại DOM (mutated)
+    3. Render lại UI
+    4. Gọi cleanup nếu deps thay đổi
+    5. Gọi useEffect callback
+### useLayoutEffect hook
+* Thứ tự công việc được làm:
+    1. Cập nhật lại state
+    2. Cập nhật lại DOM (mutated)
+    3. Gọi cleanup nếu deps thay đổi (sync)
+    4. Gọi useLayoutEffect callback (sync)
+    5. Render lại UI
+- Cũng tương tự useEffect những thứ tự công việc của useLayoutEffect khác là nó render ở cuối. Và useLayoutEffect áp dụng khi bạn muốn set lại 2 lần trong một lần chạy.
+    ```jsx
+    import { useLayoutEffect, useState } from "react"
+
+    function Content() {
+
+        const [count, setCount] = useState(0)
+
+        useLayoutEffect(() => {
+            if(count > 3) {
+                setCount(0)
+            }
+        }, [count])
+
+        const handleRun = () => {
+            setCount(count + 1)
+        }
+
+        return (
+            <div>
+                <h1>{count}</h1>
+                <button onClick={handleRun}>Run</button>
+            </div>
+        )
+    }
+
+    export default Content
+    ```
