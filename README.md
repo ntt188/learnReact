@@ -1065,3 +1065,145 @@ React.createElement('h1', {className: 'heading', title: 'Hello'}, 'Hello guys!')
 
     export default App;
     ```
+### Phương thức React.memo HOC(Higher order component)
+- React.memo được gọi là Higher order component (HOC). Dùng để ghi nhớ các props của một component, quyết định xem có render lại component đó hay không để tối ưu về hiệu năng.
+
+- Ngắn gọn React.memo dùng để xử lý component tránh re-render trong tình huống không cần thiết.
+* Tại file **App.js**
+```jsx
+import { useState } from "react";
+import Content from "./Content";
+
+// Lưu các giá trị qua một tham chiếu bên ngoài
+// function component
+
+function App() {
+    const [count, setCount] = useState(0)
+
+  const increase = () => {
+    setCount(count + 1)
+  }
+
+  return (
+      <div style={{padding: '10px 32px'}}>
+          <Content />
+          <h1>{count}</h1>
+          <button onClick={increase}>Click me!</button>
+      </div>
+  )
+}
+
+export default App;
+```
+* Tạo file **Content.js** tại thư mục **src**
+```jsx
+import { memo } from "react"
+
+function Content() {
+    return (
+        <h2>HELLO ANH EM F8</h2>
+    )
+}
+
+export default memo(Content)
+```
+### useCallback hook
+- Dùng để sử lý khi bạn dùm **React.memo()** giúp ko tạo ra các function component ko cần thiết
+* Tại file **App.js**
+```jsx
+import { useCallback, useState } from "react";
+import Content from "./Content";
+
+// Lưu các giá trị qua một tham chiếu bên ngoài
+// function component
+
+function App() {
+    const [count, setCount] = useState(0)
+
+  const handleIncrease = useCallback(() => {
+    setCount(count + 1)
+  })
+
+  return (
+      <div style={{padding: '10px 32px'}}>
+          <Content onIncrease={handleIncrease} />
+          <h1>{count}</h1>
+      </div>
+  )
+}
+
+export default App;
+```
+* Tạo file **Content.js** tại thư mục **src**
+```jsx
+import { memo } from "react"
+
+function Content({onIncrease}) {
+    return (
+        <>
+            <h2>HELLO ANH EM F8</h2>
+            <button onClick={onIncrease}>Click me!</button>
+        </>
+    )
+}
+
+export default memo(Content)
+```
+### useMemo hook
+- Giúp tránh thực hiện lại một logic nào đó ko cần thiết
+```jsx
+import { useMemo, useRef, useState } from "react";
+
+function App() {
+    const [name, setName] = useState('')
+  const [price, setPrice] = useState('')
+  const [products, setProducts] = useState([])
+  
+  const nameRef = useRef()
+
+  const handleSubmit = () => {
+    setProducts([...products, {
+      name,
+      // Chuyển chữu thành số thêm dấu '+' đằng trước
+      price: +price
+    }])
+    setName('')
+    setPrice('')
+    nameRef.current.focus()
+  }
+
+  const total = useMemo(() => {
+    const result = products.reduce((result, prod) => 
+    result + prod.price, 0)
+    return result
+  }, [products])
+
+  return (
+      <div style={{padding: '10px 32px'}}>
+          <input 
+            value={name}
+            placeholder="Enter name..."
+            ref={nameRef}
+            onChange={e => setName(e.target.value)}
+          />
+          <br />
+          <input 
+            value={price}
+            placeholder="Enter price..."
+            onChange={e => setPrice(e.target.value)}
+          />
+          <br />
+          <button onClick={handleSubmit}>Add</button>
+          <br />
+          Total: {total}
+          <ul>
+            {products.map((product, index) => (
+              <li key={index}>{product.name} - {product.price}</li>
+            ))}
+          </ul>
+      </div>
+  )
+}
+
+export default App;
+```
