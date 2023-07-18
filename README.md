@@ -1207,3 +1207,414 @@ function App() {
 
 export default App;
 ```
+### useReducer hook
+- Với useState:
+    1. Init state: 0
+    2. Action: Up (state + 1) / Down (state - 1)
+- Với useReducer:
+    1. Init state: 0
+    2. Action: Up (state + 1) / Down (state - 1)
+    3. Reducer
+    4. Dispatch
+    ```jsx
+    import { useReducer } from "react";
+
+    // Init state
+    const initState = 0
+
+    // Actions
+    const UP_ACTION = 'up'
+    const DOWN_ACTION = 'down'
+
+    // Reducer
+    const reducer = (state, action) => {
+    switch(action) {
+        case UP_ACTION:
+        return state + 1
+        case DOWN_ACTION:
+        return state - 1
+        default:
+        throw new Error('Invalid action')
+    }
+    }
+
+    function App() {
+        const [count, dispatch] = useReducer(reducer, initState)
+
+        return (
+            <div style={{padding: '0 20px'}}>
+                <h1>{count}</h1>
+                <button 
+                    onClick={() => dispatch(DOWN_ACTION)}
+                >
+                    Down
+                </button>
+                <button
+                    onClick={() => dispatch(UP_ACTION)}
+                >
+                    Up
+                </button>
+            </div>
+        )
+    }
+
+    export default App;
+    ```
+* **Todo App**
+```jsx
+import { useReducer, useRef } from "react";
+
+// useReducer
+  // 1. Init state
+  const initState = {
+    job: '',
+    jobs: []
+  }
+
+  // 2. Actions
+  const SET_JOB = 'set_job'
+  const ADD_JOB = 'add_job'
+  const DELETE_JOB = 'delete_job'
+
+  const setJob = payload => {
+    return {
+      type: SET_JOB,
+      payload
+    }
+  }
+
+  const addJob = payload => {
+    return {
+      type: ADD_JOB,
+      payload
+    }
+  }
+
+  const deleteJob = payload => {
+    return {
+      type: DELETE_JOB,
+      payload
+    }
+  }
+
+  // 3. Reducer
+  const reduce = (state, action) => {
+    
+    switch(action.type) {
+      case SET_JOB:
+        return {
+          ...state,
+          job: action.payload
+        }
+      case ADD_JOB:
+        return {
+          ...state,
+          jobs: [...state.jobs, action.payload]
+        }
+      case DELETE_JOB:
+        const newJobs = [...state.jobs]
+
+        newJobs.splice(action.payload, 1)
+
+        return {
+          ...state,
+          jobs: newJobs
+        }
+      default:
+        throw new Error('Invalid action')
+    }
+  }
+
+  // 4. Dispatch 
+
+function App() {
+    const [state, dispatch] = useReducer(reduce, initState)
+
+  const { job, jobs } = state
+
+  const inputRef = useRef();
+
+  const handleSubmit = () => {
+    dispatch(addJob(job))
+    dispatch(setJob(''))
+
+    inputRef.current.focus()
+  }
+
+  return (
+      <div style={{padding: '0 20px'}}>
+        <h3>Todo</h3>
+        <input 
+          value={job}
+          placeholder="Enter todo..."
+          onChange={e => {
+            dispatch(setJob(e.target.value))
+          }}
+          ref={inputRef}
+        />
+        <button
+          onClick={handleSubmit}
+        >
+          Add
+        </button>
+        <ul>
+          {jobs.map((job, index) => (
+            <li key={index}>
+              {job}
+              <span onClick={() => dispatch(deleteJob(index))}>&times;</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+  )
+}
+
+export default App;
+```
+### useContext hook
+* đơn giản hóa việc truyền dữ liệu từ component cha xuống component con mà ko qua gián tiếp
+* Tại file **App.css** tại thư mục **src**
+```css
+.dark {
+  color: #fff;
+  background-color: #333;
+}
+```
+* Tạo file **Content.js** tại thư mục **src**
+```jsx
+import Paragraph from "./Paragraph"
+
+function Content() {
+    return (
+        <div>
+            <Paragraph />
+        </div>
+    )
+}
+
+export default Content
+```
+* Tạo file **Paragraph.js.css** tại thư mục **src**
+```jsx
+import { useContext } from "react"
+import { ThemeContext } from "./App"
+
+function Paragraph() {
+    const theme = useContext(ThemeContext)
+    return (
+        <p className={theme}>
+            Context provides a way to pass data through the component tree without having to pass props down manually at every lever.
+        </p>
+    )
+}
+
+export default Paragraph
+```
+* Tại file **App.js** tại thư mục **src**
+```jsx
+import { useState, createContext } from "react";
+import Content from "./Content"
+import './App.css'
+
+export const ThemeContext = createContext()
+
+
+// Context
+// CompA => CompB => CompC
+
+// 1. Create context
+// 2. Provider
+// 3. Consumer
+
+function App() {
+  
+    const [theme, setTheme] = useState('dark')
+  
+    const toggleTheme = () => {
+      setTheme(theme === 'dark' ? 'light' : 'dark')
+    }
+
+    return (
+        <ThemeContext.Provider value={theme}>
+          <div style={{padding: 20}}>
+              <button onClick={toggleTheme}>Toggle theme</button>
+              <Content />
+          </div>
+        </ThemeContext.Provider>      
+    )
+}
+
+export default App;
+```
+### Context + useReducer
+* Tại file **index.js** trong thư mục **src** ta bọc ngoài thẻ APP môt thẻ <StoreProvider>
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import { StoreProvider } from './store';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <StoreProvider>
+      <App />
+    </StoreProvider>
+  </React.StrictMode>
+);
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
+```
+* Tại file **App.js**
+```jsx
+import { useStore, actions } from "./store";
+
+function App() {
+    const [state, dispatch] = useStore()
+    const { todos, todoInput } = state
+
+    const handleAdd = () => {
+        dispatch(actions.addTodo(todoInput))
+    }
+
+    return (
+        <div>
+            <input 
+                value={todoInput}
+                placeholder="Enter todo..."
+                onChange={e => {
+                  dispatch(actions.setTodoInput(e.target.value))
+                }}
+            />
+            <button onClick={handleAdd}>Add</button>
+            {todos.map((todo, index) => 
+                <li key={index}>{todo}</li>
+            )}
+        </div>
+    )
+}
+
+export default App;
+```
+#### Tạo thư mục có tên là store trong thư mục src
+* Tạo file **action.js** và **reduce.js** và **constants.js** để sử dụng hook useReducer
+    - **action.js**
+        ```jsx
+        import { ADD_TODO, SET_TODO_INPUT } from "./constants";
+
+        export const setTodoInput = payload => ({
+            type: SET_TODO_INPUT,
+            payload
+        })
+
+        export const addTodo = payload => ({
+            type: ADD_TODO,
+            payload
+        })
+        ```
+    - **constants.js**
+        ```jsx
+        export const SET_TODO_INPUT = 'set_todo_input'
+        export const ADD_TODO = 'add_todo'
+        ```
+    - **reduce.js**
+        ```jsx
+        import { SET_TODO_INPUT, ADD_TODO } from "./constants"
+
+        const initState = {
+            todos: [],
+            todoInput: ''
+        }
+
+        function reducer (state, action) {
+            switch (action.type) {
+                case SET_TODO_INPUT:
+                    return {
+                        ...state,
+                        todoInput: action.payload
+                    }
+                case ADD_TODO:
+                    return {
+                        ...state,
+                        todos: [...state.todos, action.payload]
+                    }
+                default:
+                    throw new Error('Invalid action.')
+            }
+        }
+
+
+        export { initState }
+        export default reducer
+        ```
+* Tạo Component **Provider.js**
+```jsx
+import { useReducer } from "react"
+import Context from "./Context"
+import reducer, {initState} from "./reducer"
+import logger from "./logger"
+
+function Provider({ children }) {
+    const [state, dispatch] = useReducer(logger(reducer), initState)
+
+    return (
+        <Context.Provider value={[state, dispatch]}>
+            {children}
+        </Context.Provider>
+    )
+}
+
+export default Provider
+```
+* Tạo Component **Context.js**
+```jsx
+import { createContext } from "react";
+
+const Context = createContext()
+
+export default Context
+```
+* Tạo file **hook.js**
+```jsx
+import { useContext } from 'react'
+import Context from "./Context"
+
+export const useStore = () => {
+    const [state, dispatch] = useContext(Context)
+
+    return [state, dispatch]
+}
+```
+* Tạo file **index.js**
+```jsx
+export { default as StoreProvider} from './Provider'
+export { default as StoreContext } from './Context'
+export * from './hooks'
+
+export * as actions from './actions'
+```
+* Tạo file **logger.js** để log ra các dữ liệu mà ta thao tác
+```jsx
+import { actions } from ".";
+
+function logger(reducer) {
+    return (prevState, action) => {
+        console.group(action.type)
+        console.log('Prev state: ', prevState)
+        console.log('Action: ', action)
+        
+        const nextState = reducer(prevState, action)
+
+        console.log('Next state: ', nextState)
+        console.groupEnd()
+        return nextState
+    }
+}
+
+export default logger
+```
