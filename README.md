@@ -1618,3 +1618,7 @@ function logger(reducer) {
 
 export default logger
 ```
+### useImperativeHandle hook
+* Tùy chỉnh được ref của 1 function component
+## CSS, SCSS và CSS modules
+### Sử dụng CSS
