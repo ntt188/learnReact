@@ -187,15 +187,15 @@
 			cập nhật (render lại theo dữ liệu).
 
 		- Cách dùng
-		```jsx 
-		import { userState } from 'react'
+			```jsx 
+			import { userState } from 'react'
 
-		function Component() {
-			cons [state, setState] = useState(initState)
+			function Component() {
+				cons [state, setState] = useState(initState)
 
-			...
-		}
-		```
+				...
+			}
+			```
 
 		- Lưu ý
 			- Component được re-render sau khi `setState`

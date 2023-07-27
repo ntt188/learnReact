@@ -1620,5 +1620,101 @@ export default logger
 ```
 ### useImperativeHandle hook
 * Tùy chỉnh được ref của 1 function component
+* Tạo folder name **videos** để lưu video
+* Tạo component **Video.js**
+```jsx
+import { forwardRef, useImperativeHandle, useRef } from 'react'
+import video1 from './videos/video-1.mp4'
+
+function Video(props, ref) {
+    const videoRef = useRef()
+
+    useImperativeHandle(ref, () => ({
+        play() {
+            videoRef.current.play()
+        },
+        pause() {
+            videoRef.current.pause()
+        }
+    }))
+
+    return (
+        <video 
+            ref={videoRef}
+            src={video1}
+            width={280}
+        />
+    )
+}
+
+export default forwardRef(Video)
+```
+* Tại file **App.js**
+```jsx
+import { useRef } from "react";
+import Video from "./Video";
+
+function App() {
+    const videoRef = useRef()
+
+    const handlePlay = () => {
+        videoRef.current.play()
+    }
+
+    const handlePause = () => {
+        videoRef.current.pause()
+    }
+
+    return (
+        <div>
+            <Video ref={videoRef} />
+            <button onClick={handlePlay}>Play</button>
+            <button onClick={handlePause}>Pause</button>
+        </div>
+    )
+}
+
+export default App;
+
+```
 ## CSS, SCSS và CSS modules
 ### Sử dụng CSS
+* CSS inline
+```jsx
+function App() {
+    return (
+        <div style={{ padding: '0 32px' }}>
+           <h1>CSS</h1> 
+        </div>
+    )
+}
+
+export default App;
+```
+* Tạo 1 file css nhưng phải nằm trong thư mục src
+    - Development: npm start / yarn start -> CSS internal
+    - production: npm run built / yarn built -> CSS external
+    - Tại file **App.css**
+    ```jsx
+    .heading {
+        color: green;
+    }
+    ```
+    - Tại file **App.js**
+    ```jsx
+    import './App.css'
+
+    function App() {
+        return (
+            <div style={{ padding: '0 32px' }}>
+            <h1 className='heading'>CSS</h1> 
+            </div>
+        )
+    }
+
+    export default App;
+    ```
+### CSS module
+## Router
+
+## Tiktok clone
